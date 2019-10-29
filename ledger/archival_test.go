@@ -209,6 +209,38 @@ func TestArchivalRestart(t *testing.T) {
 	require.Equal(t, basics.Round(0), earliest)
 }
 
+func makeUnsignedAssetCreateTx(total uint64, defaultFrozen bool, manager string, reserve string, freeze string, clawback string, unitName string, assetName string, url string, metadataHash []byte) (transactions.Transaction, error) {
+	var tx transactions.Transaction
+	var err error
+
+	tx.Type = protocol.AssetConfigTx
+	tx.AssetParams = basics.AssetParams{
+		Total:         total,
+		DefaultFrozen: defaultFrozen,
+	}
+	tx.AssetParams.Manager, err = basics.UnmarshalChecksumAddress(manager)
+	if err != nil {
+		return tx, err
+	}
+	tx.AssetParams.Reserve, err = basics.UnmarshalChecksumAddress(reserve)
+	if err != nil {
+		return tx, err
+	}
+	tx.AssetParams.Freeze, err = basics.UnmarshalChecksumAddress(freeze)
+	if err != nil {
+		return tx, err
+	}
+	tx.AssetParams.Clawback, err = basics.UnmarshalChecksumAddress(clawback)
+	if err != nil {
+		return tx, err
+	}
+	tx.AssetParams.URL = url
+	copy(tx.AssetParams.MetadataHash[:], metadataHash)
+	tx.AssetParams.UnitName = unitName
+	tx.AssetParams.AssetName = assetName
+	return tx, nil
+}
+
 func TestArchivalAssets(t *testing.T) {
 	// Start in archival mode, add 2K blocks with asset txns, restart, ensure all
 	// assets are there in index
@@ -254,7 +286,7 @@ func TestArchivalAssets(t *testing.T) {
 
 		// Make a transaction that will create an asset
 		creatorEncoded := creators[i].String()
-		tx, err := client.MakeUnsignedAssetCreateTx(100, false, creatorEncoded, creatorEncoded, creatorEncoded, creatorEncoded, "m", "m", "", nil)
+		tx, err := makeUnsignedAssetCreateTx(100, false, creatorEncoded, creatorEncoded, creatorEncoded, creatorEncoded, "m", "m", "", nil)
 		require.NoError(t, err)
 		tx.Sender = creators[i]
 
@@ -297,7 +329,7 @@ func TestArchivalAssets(t *testing.T) {
 
 	tx1, err := client.MakeUnsignedAssetDestroyTx(maxBlocks)
 	require.NoError(t, err)
-	tx1.Sender = creators[maxBlocks - 1]
+	tx1.Sender = creators[maxBlocks-1]
 
 	// start mining the block with the deletion txn
 	blk.BlockHeader.Round++
@@ -318,7 +350,7 @@ func TestArchivalAssets(t *testing.T) {
 	// check that we can still fetch creator for all created assets except first and last
 	for i := 0; i < maxBlocks; i++ {
 		c, err := l.GetAssetCreator(basics.AssetIndex(i + 1))
-		if i == 0 || i == maxBlocks - 1 {
+		if i == 0 || i == maxBlocks-1 {
 			require.Error(t, err)
 			require.Equal(t, basics.Address{}, c)
 		} else {
@@ -347,7 +379,7 @@ func TestArchivalAssets(t *testing.T) {
 	// check that we can still fetch creator for all created assets except first and last
 	for i := 0; i < maxBlocks; i++ {
 		c, err := l.GetAssetCreator(basics.AssetIndex(i + 1))
-		if i == 0 || i == maxBlocks - 1 {
+		if i == 0 || i == maxBlocks-1 {
 			require.Error(t, err)
 			require.Equal(t, basics.Address{}, c)
 		} else {
@@ -358,9 +390,9 @@ func TestArchivalAssets(t *testing.T) {
 }
 
 func makeSignedTxnInBlock(tx transactions.Transaction) transactions.SignedTxnInBlock {
-	return transactions.SignedTxnInBlock {
-		SignedTxnWithAD: transactions.SignedTxnWithAD {
-			SignedTxn: transactions.SignedTxn {
+	return transactions.SignedTxnInBlock{
+		SignedTxnWithAD: transactions.SignedTxnWithAD{
+			SignedTxn: transactions.SignedTxn{
 				Txn: tx,
 			},
 		},

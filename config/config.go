@@ -192,6 +192,15 @@ type ConsensusParams struct {
 	// max number of assets per account
 	MaxAssetsPerAccount int
 
+	// max length of asset name
+	MaxAssetNameBytes int
+
+	// max length of asset unit name
+	MaxAssetUnitNameBytes int
+
+	// max length of asset url
+	MaxAssetURLBytes int
+
 	// support sequential transaction counter TxnCounter
 	TxnCounter bool
 
@@ -419,11 +428,14 @@ func initConsensusProtocols() {
 	v18.MaxTxGroupSize = 16
 	v18.SupportTransactionLeases = true
 	v18.SupportBecomeNonParticipatingTransactions = true
+	v18.MaxAssetNameBytes = 32
+	v18.MaxAssetUnitNameBytes = 8
+	v18.MaxAssetURLBytes = 32
 	v18.ApprovedUpgrades = map[protocol.ConsensusVersion]bool{}
 	Consensus[protocol.ConsensusV18] = v18
 
 	// v17 can be upgraded to v18.
-	 v17.ApprovedUpgrades[protocol.ConsensusV18] = true
+	v17.ApprovedUpgrades[protocol.ConsensusV18] = true
 
 	// ConsensusFuture is used to test features that are implemented
 	// but not yet released in a production protocol version.
