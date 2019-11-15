@@ -432,14 +432,35 @@ func initConsensusProtocols() {
 	v18.MaxAssetUnitNameBytes = 8
 	v18.MaxAssetURLBytes = 32
 	v18.ApprovedUpgrades = map[protocol.ConsensusVersion]bool{}
+	v18.TxnCounter = true
+	v18.Asset = true
+	v18.LogicSigVersion = 1
+	v18.LogicSigMaxSize = 1000
+	v18.LogicSigMaxCost = 20000
+	v18.MaxAssetsPerAccount = 1000
+	v18.SupportTxGroups = true
+	v18.MaxTxGroupSize = 16
+	v18.SupportTransactionLeases = true
+	v18.SupportBecomeNonParticipatingTransactions = true
+	v18.MaxAssetNameBytes = 32
+	v18.MaxAssetUnitNameBytes = 8
+	v18.MaxAssetURLBytes = 32
 	Consensus[protocol.ConsensusV18] = v18
 
+	// ConsensusV19 is the official spec commit ( teal, assets, group tx )
+	v19 := v18
+	v19.ApprovedUpgrades = map[protocol.ConsensusVersion]bool{}
+
+	Consensus[protocol.ConsensusV19] = v19
+
+	// v18 can be upgraded to v19.
+	v18.ApprovedUpgrades[protocol.ConsensusV19] = true
 	// v17 can be upgraded to v18.
-	v17.ApprovedUpgrades[protocol.ConsensusV18] = true
+	v17.ApprovedUpgrades[protocol.ConsensusV19] = true
 
 	// ConsensusFuture is used to test features that are implemented
 	// but not yet released in a production protocol version.
-	vFuture := v18
+	vFuture := v19
 	vFuture.ApprovedUpgrades = map[protocol.ConsensusVersion]bool{}
 	Consensus[protocol.ConsensusFuture] = vFuture
 }
