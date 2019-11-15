@@ -418,19 +418,6 @@ func initConsensusProtocols() {
 	// ConsensusV18 points to reward calculation spec commit
 	v18 := v17
 	v18.PendingResidueRewards = true
-	v18.TxnCounter = true
-	v18.Asset = true
-	v18.LogicSigVersion = 1
-	v18.LogicSigMaxSize = 1000
-	v18.LogicSigMaxCost = 20000
-	v18.MaxAssetsPerAccount = 1000
-	v18.SupportTxGroups = true
-	v18.MaxTxGroupSize = 16
-	v18.SupportTransactionLeases = true
-	v18.SupportBecomeNonParticipatingTransactions = true
-	v18.MaxAssetNameBytes = 32
-	v18.MaxAssetUnitNameBytes = 8
-	v18.MaxAssetURLBytes = 32
 	v18.ApprovedUpgrades = map[protocol.ConsensusVersion]bool{}
 	v18.TxnCounter = true
 	v18.Asset = true
