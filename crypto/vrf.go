@@ -27,12 +27,18 @@ package crypto
 // #cgo linux,arm LDFLAGS: ${SRCDIR}/libs/linux/arm/lib/libsodium.a
 // #include <stdint.h>
 // #include "sodium.h"
-import "C"
+import (
+	"C"
+	"time"
+)
 
 func init() {
-	if C.sodium_init() == -1 {
-		panic("sodium_init() failed")
-	}
+	// simulate the time to instatiate public matrix A
+	time.Sleep(150 * time.Millisecond)
+
+	// if C.sodium_init() == -1 {
+	// 	panic("sodium_init() failed")
+	// }
 }
 
 // deprecated names + wrappers -- TODO remove
@@ -82,7 +88,7 @@ type (
 func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
 
 	// simulate the time for key generation
-	time.Sleep(400 * time.Milliseconds)
+	time.Sleep(400 * time.Millisecond)
 	// C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
 	return pub, priv
 }
@@ -91,7 +97,7 @@ func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
 func VrfKeygen() (pub VrfPubkey, priv VrfPrivkey) {
 
 	// simulate the time for key generation
-	time.Sleep(400 * time.Milliseconds)
+	time.Sleep(400 * time.Millisecond)
 	//C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
 	return pub, priv
 }
@@ -100,7 +106,7 @@ func VrfKeygen() (pub VrfPubkey, priv VrfPrivkey) {
 func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
 	// simulate the time for key generation
 	// this essentially is the same as key generation
-	time.Sleep(400 * time.Milliseconds)
+	time.Sleep(400 * time.Millisecond)
 
 	// C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
 	return pk
@@ -108,12 +114,12 @@ func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
 
 func (sk VrfPrivkey) proveBytes(msg []byte) (proof VrfProof, ok bool) {
 	// &msg[0] will make Go panic if msg is zero length
-	m := (*C.uchar)(C.NULL)
-	if len(msg) != 0 {
-		m = (*C.uchar)(&msg[0])
-	}
+	// m := (*C.uchar)(C.NULL)
+	// if len(msg) != 0 {
+	// 	m = (*C.uchar)(&msg[0])
+	// }
 	// simulate the time for proving
-	time.Sleep(1400 * time.Milliseconds)
+	time.Sleep(1400 * time.Millisecond)
 	// ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
 	return proof, true // ret == 0
 }
@@ -127,20 +133,21 @@ func (sk VrfPrivkey) Prove(message Hashable) (proof VrfProof, ok bool) {
 // Hash converts a VRF proof to a VRF output without verifying the proof.
 // TODO: Consider removing so that we don't accidentally hash an unverified proof
 func (proof VrfProof) Hash() (hash VrfOutput, ok bool) {
-	ret := C.crypto_vrf_proof_to_hash((*C.uchar)(&hash[0]), (*C.uchar)(&proof[0]))
-	return hash, ret == 0
+	// ret := C.crypto_vrf_proof_to_hash((*C.uchar)(&hash[0]), (*C.uchar)(&proof[0]))
+	// return hash, ret == 0
+	return hash, true
 }
 
 func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	var out VrfOutput
-	// &msg[0] will make Go panic if msg is zero length
-	m := (*C.uchar)(C.NULL)
-	if len(msg) != 0 {
-		m = (*C.uchar)(&msg[0])
-	}
+	// // &msg[0] will make Go panic if msg is zero length
+	// m := (*C.uchar)(C.NULL)
+	// if len(msg) != 0 {
+	// 	m = (*C.uchar)(&msg[0])
+	// }
 
 	// simulate the time for verifying
-	time.Sleep(1400 * time.Milliseconds)
+	time.Sleep(1400 * time.Millisecond)
 	// ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
 	// return ret == 0, out
 	// always output true for testing
