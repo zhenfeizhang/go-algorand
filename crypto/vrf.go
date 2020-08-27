@@ -66,30 +66,43 @@ type (
 	// Specifically, we use a 64-byte ed25519 private key (the latter 32-bytes are the precomputed public key)
 	VrfPrivkey [64]byte
 	// A VrfPubkey is a public key that can be used to verify VRF proofs.
-	VrfPubkey [32]byte
+	// A LBVrfPubKey is roughly 3290 bytes
+	VrfPubkey [3290]byte
 	// A VrfProof for a message can be generated with a secret key and verified against a public key, like a signature.
 	// Proofs are malleable, however, for a given message and public key, the VRF output that can be computed from a proof is unique.
-	VrfProof [80]byte
+	// A LBVrfProof is roughly 4660 bytes
+	VrfProof [4660]byte
 	// VrfOutput is a 64-byte pseudorandom value that can be computed from a VrfProof.
 	// The VRF scheme guarantees that such output will be unique
-	VrfOutput [64]byte
+	// A LBVrfOutput is 84 bytes
+	VrfOutput [84]byte
 )
 
 // VrfKeygenFromSeed deterministically generates a VRF keypair from 32 bytes of (secret) entropy.
 func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
-	C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
+
+	// simulate the time for key generation
+	time.Sleep(400 * time.Milliseconds)
+	// C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
 	return pub, priv
 }
 
 // VrfKeygen generates a random VRF keypair.
 func VrfKeygen() (pub VrfPubkey, priv VrfPrivkey) {
-	C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
+
+	// simulate the time for key generation
+	time.Sleep(400 * time.Milliseconds)
+	//C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
 	return pub, priv
 }
 
 // Pubkey returns the public key that corresponds to the given private key.
 func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
-	C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
+	// simulate the time for key generation
+	// this essentially is the same as key generation
+	time.Sleep(400 * time.Milliseconds)
+
+	// C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
 	return pk
 }
 
@@ -99,8 +112,10 @@ func (sk VrfPrivkey) proveBytes(msg []byte) (proof VrfProof, ok bool) {
 	if len(msg) != 0 {
 		m = (*C.uchar)(&msg[0])
 	}
-	ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
-	return proof, ret == 0
+	// simulate the time for proving
+	time.Sleep(1400 * time.Milliseconds)
+	// ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
+	return proof, true // ret == 0
 }
 
 // Prove constructs a VRF Proof for a given Hashable.
@@ -123,8 +138,13 @@ func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	if len(msg) != 0 {
 		m = (*C.uchar)(&msg[0])
 	}
-	ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
-	return ret == 0, out
+
+	// simulate the time for verifying
+	time.Sleep(1400 * time.Milliseconds)
+	// ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
+	// return ret == 0, out
+	// always output true for testing
+	return true, out
 }
 
 // Verify checks a VRF proof of a given Hashable. If the proof is valid the pseudorandom VrfOutput will be returned.
