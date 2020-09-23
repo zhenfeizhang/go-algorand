@@ -30,6 +30,7 @@ package crypto
 import (
 	"C"
 	"time"
+	"math/rand"
 )
 
 func init() {
@@ -80,8 +81,8 @@ type (
 	VrfProof [4660]byte
 	// VrfOutput is a 64-byte pseudorandom value that can be computed from a VrfProof.
 	// The VRF scheme guarantees that such output will be unique
-	// A LBVrfOutput is 84 bytes
-	VrfOutput [84]byte
+	// A LBVrfOutput is 64 bytes
+	VrfOutput [64]byte
 )
 
 // VrfKeygenFromSeed deterministically generates a VRF keypair from 32 bytes of (secret) entropy.
@@ -140,6 +141,8 @@ func (proof VrfProof) Hash() (hash VrfOutput, ok bool) {
 
 func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	var out VrfOutput
+  rand.Read(out[:])
+
 	// // &msg[0] will make Go panic if msg is zero length
 	// m := (*C.uchar)(C.NULL)
 	// if len(msg) != 0 {
