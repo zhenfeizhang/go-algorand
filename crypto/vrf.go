@@ -36,7 +36,7 @@ import (
 
 func init() {
 	// simulate the time to instatiate public matrix A
-	time.Sleep(150 * time.Millisecond)
+	time.Sleep(150 * time.Microsecond)
 
 	// if C.sodium_init() == -1 {
 	// 	panic("sodium_init() failed")
