@@ -31,6 +31,7 @@ import (
 	"C"
 	"time"
 	"math/rand"
+	"crypto/sha512"
 )
 
 func init() {
@@ -122,6 +123,7 @@ func (sk VrfPrivkey) proveBytes(msg []byte) (proof VrfProof, ok bool) {
 	// simulate the time for proving
 	time.Sleep(1400 * time.Millisecond)
 	// ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
+  rand.Read(proof[:])
 	return proof, true // ret == 0
 }
 
@@ -134,15 +136,17 @@ func (sk VrfPrivkey) Prove(message Hashable) (proof VrfProof, ok bool) {
 // Hash converts a VRF proof to a VRF output without verifying the proof.
 // TODO: Consider removing so that we don't accidentally hash an unverified proof
 func (proof VrfProof) Hash() (hash VrfOutput, ok bool) {
+
+	var output = sha512.Sum512(proof[:])
 	// ret := C.crypto_vrf_proof_to_hash((*C.uchar)(&hash[0]), (*C.uchar)(&proof[0]))
-	// return hash, ret == 0
-	return hash, true
+	return output, true
+	// return hash, true
 }
 
 func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
-	var out VrfOutput
-  rand.Read(out[:])
 
+	// ret := C.crypto_vrf_proof_to_hash((*C.uchar)(&out[0]), (*C.uchar)(&proof[0]))
+	var output = sha512.Sum512(proof[:])
 	// // &msg[0] will make Go panic if msg is zero length
 	// m := (*C.uchar)(C.NULL)
 	// if len(msg) != 0 {
@@ -154,7 +158,7 @@ func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	// ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
 	// return ret == 0, out
 	// always output true for testing
-	return true, out
+	return true, output
 }
 
 // Verify checks a VRF proof of a given Hashable. If the proof is valid the pseudorandom VrfOutput will be returned.
