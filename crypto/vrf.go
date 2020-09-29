@@ -29,7 +29,7 @@ package crypto
 // #include "sodium.h"
 import (
 	"C"
-	"time"
+	// "time"
 	"math/rand"
 	"crypto/sha512"
 )
