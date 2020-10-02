@@ -38,9 +38,9 @@ func init() {
 	// simulate the time to instatiate public matrix A
 	// time.Sleep(150 * time.Microsecond)
 
-	// if C.sodium_init() == -1 {
-	// 	panic("sodium_init() failed")
-	// }
+	if C.sodium_init() == -1 {
+		panic("sodium_init() failed")
+	}
 }
 
 // deprecated names + wrappers -- TODO remove
@@ -90,33 +90,33 @@ type (
 
 // VrfKeygenFromSeed deterministically generates a VRF keypair from 32 bytes of (secret) entropy.
 func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
-  rand.Read(pub[:])
-	rand.Read(priv[:])
+  // rand.Read(pub[:])
+	// rand.Read(priv[:])
 	// simulate the time for key generation
 	// time.Sleep(400 * time.Microsecond)
-	// C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
+	C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
 	return pub, priv
 }
 
 // VrfKeygen generates a random VRF keypair.
 func VrfKeygen() (pub VrfPubkey, priv VrfPrivkey) {
-	rand.Read(pub[:])
-	rand.Read(priv[:])
+	// rand.Read(pub[:])
+	// rand.Read(priv[:])
 	// simulate the time for key generation
 	// time.Sleep(400 * time.Microsecond)
-	//C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
+	C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
 	return pub, priv
 }
 
 // Pubkey returns the public key that corresponds to the given private key.
 func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
-	rand.Read(pk[:])
+	// rand.Read(pk[:])
 
 	// simulate the time for key generation
 	// this essentially is the same as key generation
 	// time.Sleep(3100 * time.Microsecond)
 
-	// C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
+	C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
 	return pk
 }
 
