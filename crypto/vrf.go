@@ -27,8 +27,10 @@ package crypto
 // #cgo linux,arm LDFLAGS: ${SRCDIR}/libs/linux/arm/lib/libsodium.a
 // #include <stdint.h>
 // #include "sodium.h"
+import "C"
+
 import (
-	"C"
+	// "C"
 	// "time"
 	"math/rand"
 	"crypto/sha512"
