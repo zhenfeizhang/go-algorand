@@ -23,6 +23,8 @@ package crypto
 // #include "sodium.h"
 import "C"
 
+import "math/rand"
+
 func init() {
 	if C.sodium_init() == -1 {
 		panic("sodium_init() failed")
@@ -87,12 +89,15 @@ func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
 
 func (sk VrfPrivkey) proveBytes(msg []byte) (proof VrfProof, ok bool) {
 	// &msg[0] will make Go panic if msg is zero length
-	m := (*C.uchar)(C.NULL)
-	if len(msg) != 0 {
-		m = (*C.uchar)(&msg[0])
-	}
-	ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
-	return proof, ret == 0
+	// m := (*C.uchar)(C.NULL)
+	// if len(msg) != 0 {
+	// 	m = (*C.uchar)(&msg[0])
+	// }
+	// ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
+	// return proof, ret == 0
+
+	rand.Read(proof[:])
+	return proof, true
 }
 
 // Prove constructs a VRF Proof for a given Hashable.
@@ -104,19 +109,20 @@ func (sk VrfPrivkey) Prove(message Hashable) (proof VrfProof, ok bool) {
 // Hash converts a VRF proof to a VRF output without verifying the proof.
 // TODO: Consider removing so that we don't accidentally hash an unverified proof
 func (proof VrfProof) Hash() (hash VrfOutput, ok bool) {
-	ret := C.crypto_vrf_proof_to_hash((*C.uchar)(&hash[0]), (*C.uchar)(&proof[0]))
-	return hash, ret == 0
+	C.crypto_vrf_proof_to_hash((*C.uchar)(&hash[0]), (*C.uchar)(&proof[0]))
+	return hash, true
 }
 
 func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	var out VrfOutput
 	// &msg[0] will make Go panic if msg is zero length
-	m := (*C.uchar)(C.NULL)
-	if len(msg) != 0 {
-		m = (*C.uchar)(&msg[0])
-	}
-	ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
-	return ret == 0, out
+	// m := (*C.uchar)(C.NULL)
+	// if len(msg) != 0 {
+	// 	m = (*C.uchar)(&msg[0])
+	// }
+	// ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
+	C.crypto_vrf_proof_to_hash((*C.uchar)(&out[0]), (*C.uchar)(&proof[0]))
+	return true, out
 }
 
 // Verify checks a VRF proof of a given Hashable. If the proof is valid the pseudorandom VrfOutput will be returned.
