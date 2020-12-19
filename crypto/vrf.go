@@ -83,7 +83,7 @@ type (
 	// Proofs are malleable, however, for a given message and public key, the VRF output that can be computed from a proof is unique.
 	// A LBVrfProof is roughly 4660 bytes
 	// VrfProof [4660]byte
-	VrfProof [80]uint8
+	VrfProof [4660]uint8
 	// VrfOutput is a 64-byte pseudorandom value that can be computed from a VrfProof.
 	// The VRF scheme guarantees that such output will be unique
 	// A LBVrfOutput is 64 bytes
