@@ -92,11 +92,11 @@ type (
 
 // VrfKeygenFromSeed deterministically generates a VRF keypair from 32 bytes of (secret) entropy.
 func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
-  // rand.Read(pub[:])
-	// rand.Read(priv[:])
+  rand.Read(pub[:])
+	rand.Read(priv[:])
 	// simulate the time for key generation
 	// time.Sleep(400 * time.Microsecond)
-	C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
+	// C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
 	return pub, priv
 }
 
