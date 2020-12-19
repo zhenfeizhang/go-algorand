@@ -31,7 +31,7 @@ import "C"
 
 import (
 	// "C"
-	// "time"
+	"time"
 	"math/rand"
 	"crypto/sha512"
 )
@@ -95,7 +95,7 @@ func VrfKeygenFromSeed(seed [32]byte) (pub VrfPubkey, priv VrfPrivkey) {
   // rand.Read(pub[:])
 	// rand.Read(priv[:])
 	// simulate the time for key generation
-	// time.Sleep(400 * time.Microsecond)
+	time.Sleep(400 * time.Microsecond)
 	C.crypto_vrf_keypair_from_seed((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]), (*C.uchar)(&seed[0]))
 	return pub, priv
 }
@@ -105,7 +105,7 @@ func VrfKeygen() (pub VrfPubkey, priv VrfPrivkey) {
 	// rand.Read(pub[:])
 	// rand.Read(priv[:])
 	// simulate the time for key generation
-	// time.Sleep(400 * time.Microsecond)
+	time.Sleep(400 * time.Microsecond)
 	C.crypto_vrf_keypair((*C.uchar)(&pub[0]), (*C.uchar)(&priv[0]))
 	return pub, priv
 }
@@ -116,7 +116,7 @@ func (sk VrfPrivkey) Pubkey() (pk VrfPubkey) {
 
 	// simulate the time for key generation
 	// this essentially is the same as key generation
-	// time.Sleep(3100 * time.Microsecond)
+	time.Sleep(3100 * time.Microsecond)
 
 	C.crypto_vrf_sk_to_pk((*C.uchar)(&pk[0]), (*C.uchar)(&sk[0]))
 	return pk
@@ -129,7 +129,7 @@ func (sk VrfPrivkey) proveBytes(msg []byte) (proof VrfProof, ok bool) {
 	// 	m = (*C.uchar)(&msg[0])
 	// }
 	// simulate the time for proving
-	// time.Sleep(3100 * time.Microsecond)
+	time.Sleep(3100 * time.Microsecond)
 	// ret := C.crypto_vrf_prove((*C.uchar)(&proof[0]), (*C.uchar)(&sk[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
   rand.Read(proof[:])
 	return proof, true // ret == 0
@@ -162,7 +162,7 @@ func (pk VrfPubkey) verifyBytes(proof VrfProof, msg []byte) (bool, VrfOutput) {
 	// }
 
 	// simulate the time for verifying
-	// time.Sleep(1400 * time.Microsecond)
+	time.Sleep(1400 * time.Microsecond)
 	// ret := C.crypto_vrf_verify((*C.uchar)(&out[0]), (*C.uchar)(&pk[0]), (*C.uchar)(&proof[0]), (*C.uchar)(m), (C.ulonglong)(len(msg)))
 	// return ret == 0, out
 	// always output true for testing
