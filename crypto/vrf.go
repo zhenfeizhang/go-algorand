@@ -78,12 +78,12 @@ type (
 	// A VrfPubkey is a public key that can be used to verify VRF proofs.
 	// A LBVrfPubKey is roughly 3290 bytes
 	// VrfPubkey [3290]byte
-	VrfPubkey [32]byte
+	VrfPubkey [3290]byte
 	// A VrfProof for a message can be generated with a secret key and verified against a public key, like a signature.
 	// Proofs are malleable, however, for a given message and public key, the VRF output that can be computed from a proof is unique.
 	// A LBVrfProof is roughly 4660 bytes
 	// VrfProof [4660]byte
-	VrfProof [7950]uint8
+	VrfProof [4660]byte
 	// VrfOutput is a 64-byte pseudorandom value that can be computed from a VrfProof.
 	// The VRF scheme guarantees that such output will be unique
 	// A LBVrfOutput is 64 bytes
