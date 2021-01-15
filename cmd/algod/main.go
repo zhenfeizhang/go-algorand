@@ -275,8 +275,10 @@ func main() {
 
 	var phonebookAddresses []string
 	if peerOverrideArray != nil {
+		fmt.Printf("override phonebook addresses.")
 		phonebookAddresses = peerOverrideArray
 	} else {
+		fmt.Print("not override phonebook addresses.")
 		ex, err := os.Executable()
 		if err != nil {
 			log.Errorf("cannot locate node executable: %s", err)
@@ -285,12 +287,12 @@ func main() {
 			phonebookAddresses, err = config.LoadPhonebook(phonebookDir)
 			// Debug output
 			// log.Fatalf("phonebook addresses: %s", phonebookAddresses)
-			for _, addr := range phonebookAddresses {
-				fmt.Printf("phonebook addresses: %s", addr)
-			}
 			if err != nil {
 				log.Debugf("Cannot load static phonebook: %v", err)
 			}
+		}
+		for _, addr := range phonebookAddresses {
+			fmt.Printf("phonebook addresses: %s", addr)
 		}
 	}
 
