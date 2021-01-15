@@ -286,7 +286,7 @@ func main() {
 			// Debug output
 			// log.Fatalf("phonebook addresses: %s", phonebookAddresses)
 			for _, addr := range phonebookAddresses {
-				fmt.Fprintf(os.Stderr, "phonebook addresses: %s", addr)
+				fmt.Printf("phonebook addresses: %s", addr)
 			}
 			if err != nil {
 				log.Debugf("Cannot load static phonebook: %v", err)
