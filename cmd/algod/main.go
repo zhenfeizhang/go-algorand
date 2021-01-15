@@ -283,6 +283,11 @@ func main() {
 		} else {
 			phonebookDir := filepath.Dir(ex)
 			phonebookAddresses, err = config.LoadPhonebook(phonebookDir)
+			// Debug output
+			// log.Fatalf("phonebook addresses: %s", phonebookAddresses)
+			for _, addr := range phonebookAddresses {
+				fmt.Fprintf(os.Stderr, "phonebook addresses: %s", addr)
+			}
 			if err != nil {
 				log.Debugf("Cannot load static phonebook: %v", err)
 			}
