@@ -233,6 +233,8 @@ func main() {
 		cfg.EndpointAddress = *listenIP
 	}
 
+	fmt.Printf("listening ip: %s \n", cfg.EndpointAddress)
+
 	// If overriding peers, disable SRV lookup
 	telemetryDNSBootstrapID := cfg.DNSBootstrapID
 	var peerOverrideArray []string
