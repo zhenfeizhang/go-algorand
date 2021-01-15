@@ -38,6 +38,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
 	//"os"
 
 	"github.com/algorand/go-deadlock"
@@ -553,7 +554,7 @@ func (wn *WebsocketNetwork) GetPeers(options ...PeerOption) []Peer {
 	return outPeers
 }
 
-func (wn *WebsocketNetwork) setup() {
+func (wn *WebsocketNetwork) setup(log logging.Logger) {
 	var preferredResolver *dnssec.Resolver
 	if wn.config.DNSSecurityRelayAddrEnforced() {
 		preferredResolver = &dnssec.DefaultResolver
@@ -623,6 +624,9 @@ func (wn *WebsocketNetwork) setup() {
 	if wn.config.NetworkProtocolVersion != "" {
 		SupportedProtocolVersions = []string{wn.config.NetworkProtocolVersion}
 	}
+
+	// debug code: show network address
+	log.Errorf(wn.Address())
 }
 
 func (wn *WebsocketNetwork) rlimitIncomingConnections() error {
@@ -1886,7 +1890,7 @@ func NewWebsocketNetwork(log logging.Logger, config config.Local, phonebookAddre
 		NetworkID: networkID,
 	}
 
-	wn.setup()
+	wn.setup(log)
 	return wn, nil
 }
 
