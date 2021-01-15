@@ -291,9 +291,10 @@ func main() {
 				log.Debugf("Cannot load static phonebook: %v", err)
 			}
 		}
-		for _, addr := range phonebookAddresses {
-			fmt.Printf("phonebook addresses: %s", addr)
-		}
+	}
+
+	for _, addr := range phonebookAddresses {
+		fmt.Printf("phonebook addresses: %s", addr)
 	}
 
 	err = s.Initialize(cfg, phonebookAddresses)
